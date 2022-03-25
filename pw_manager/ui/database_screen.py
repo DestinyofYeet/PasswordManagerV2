@@ -132,7 +132,7 @@ def select_database():
                 if try_again.lower() == "y":
                     continue
                 else:
-                    break
+                    return
 
         print(f"{Fore.GREEN}Successfully selected {Fore.MAGENTA}{constants.db_file.path}{Fore.GREEN} as the database!{Style.RESET_ALL}")
 

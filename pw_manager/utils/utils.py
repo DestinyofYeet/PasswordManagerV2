@@ -6,8 +6,12 @@ import json
 import threading
 import random
 
+from YeetsMenu.menu import Menu
+from YeetsMenu.option import Option
 from colorama import Style, Fore
 from stdiomask import getpass
+
+from pw_manager.utils import constants
 
 
 def clear_screen():
@@ -167,3 +171,71 @@ def generate_password(length: int, chars_to_use: list[str]) -> str:
         password += random.choice(random.choice(chars_to_use))
 
     return password
+
+
+def get_entry(title: str, func_to_run, skip_enter_confirmation: bool = True):
+    while True:
+        clear_screen()
+        print_noice(title)
+
+        db = constants.db_file
+
+        entries: list = db.get_all_entries()
+
+        entries.sort()
+
+        i: int = 1
+
+        print(f"{Fore.CYAN}0{Fore.MAGENTA}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
+
+        for entry in entries:
+            print(f"{Fore.CYAN}{i}{Fore.MAGENTA}) {Fore.CYAN if i % 2 == 0 else Fore.MAGENTA}{entry.website_or_usage}{Style.RESET_ALL}")
+            i += 1
+
+        print()
+        user_input = ask_till_input(f"{Fore.MAGENTA}Enter a number or a term to search for\n > {Fore.CYAN}")
+        reset_style()
+
+        is_number: bool = False
+
+        try:
+            user_input = int(user_input)
+            is_number = True
+        except ValueError:
+            pass
+
+        if is_number:
+            if user_input == 0:
+                return
+
+            if user_input > len(entries):
+                print(f"{Fore.RED}The number is greater than the number of entries!{Style.RESET_ALL}")
+                continue
+
+            selected_entry = entries[user_input - 1]
+
+            func_to_run(selected_entry)
+
+        else:
+            result_list = []
+
+            for entry in entries:
+
+                if user_input.lower() in entry.website_or_usage.lower():
+                    result_list.append(entry)
+
+                elif user_input.lower() in entry.username.lower():
+                    result_list.append(entry)
+
+                elif user_input.lower() in entry.description.lower():
+                    result_list.append(entry)
+
+                elif user_input.lower() in entry.password.lower():
+                    result_list.append(entry)
+
+            menu = Menu(get_noice_text(f"Search result for \"{user_input}\""))
+
+            for entry in result_list:
+                menu.add_selectable(Option(entry.website_or_usage, func_to_run, entry, skip_enter_confirmation=skip_enter_confirmation))
+
+            menu.run()

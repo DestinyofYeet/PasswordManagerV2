@@ -35,71 +35,7 @@ def search_entry():
         if not show_password:
             utils.enter_confirmation()
 
-    while True:
-        utils.clear_screen()
-        utils.print_noice("Search entry")
-
-        db: pw_manager.db.Database = constants.db_file
-
-        entries: list[DatabaseEntry] = db.get_all_entries()
-
-        entries.sort()
-
-        i: int = 1
-
-        print(f"{Fore.CYAN}0{Fore.MAGENTA}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
-
-        for entry in entries:
-            print(f"{Fore.CYAN}{i}{Fore.MAGENTA}) {Fore.CYAN if i % 2 == 0 else Fore.MAGENTA}{entry.website_or_usage}{Style.RESET_ALL}")
-            i += 1
-
-        print()
-        user_input = utils.ask_till_input(f"{Fore.MAGENTA}Enter a number or a term to search for\n > {Fore.CYAN}")
-        utils.reset_style()
-
-        is_number: bool = False
-
-        try:
-            user_input = int(user_input)
-            is_number = True
-        except ValueError:
-            pass
-
-        if is_number:
-            if user_input == 0:
-                return
-
-            if user_input > len(entries):
-                print(f"{Fore.RED}The number is greater than the number of entries!{Style.RESET_ALL}")
-                continue
-
-            selected_entry = entries[user_input - 1]
-
-            show_entry(selected_entry)
-
-        else:
-            result_list = []
-
-            for entry in entries:
-
-                if user_input.lower() in entry.website_or_usage.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.username.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.description.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.password.lower():
-                    result_list.append(entry)
-
-            menu = Menu(utils.get_noice_text(f"Search result for \"{user_input}\""))
-
-            for entry in result_list:
-                menu.add_selectable(Option(entry.website_or_usage, show_entry, entry, skip_enter_confirmation=True))
-
-            menu.run()
+    utils.get_entry("Search entry", show_entry)
 
 
 @decorators.require_valid_db
@@ -181,6 +117,7 @@ def modify_entry():
         if new_description:
             if utils.ask_till_input(f"{Fore.MAGENTA}Are you sure you want to update the description? y/N\n > {Fore.CYAN}").lower() == "y":
                 new_entry.description = new_description
+                print(f"{Fore.GREEN}Updated description!{Style.RESET_ALL}")
 
         if new_password:
             while True:
@@ -193,79 +130,15 @@ def modify_entry():
 
             if utils.ask_till_input(f"{Fore.MAGENTA}Are you sure you want to update the password? y/N\n > {Fore.CYAN}").lower() == "y":
                 new_entry.password = new_password
+                print(f"{Fore.GREEN}Updated password!{Style.RESET_ALL}")
 
-        db.update_entry(old_entry=entry_to_show, new_entry=new_entry)
+        constants.db_file.update_entry(old_entry=entry_to_show, new_entry=new_entry)
 
         utils.reset_style()
 
-    while True:
-        utils.clear_screen()
-        utils.print_noice("Search entry")
-
-        db: pw_manager.db.Database = constants.db_file
-
-        entries: list[DatabaseEntry] = db.get_all_entries()
-
-        entries.sort()
-
-        i: int = 1
-
-        print(f"{Fore.CYAN}0{Fore.MAGENTA}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
-
-        for entry in entries:
-            print(f"{Fore.CYAN}{i}{Fore.MAGENTA}) {Fore.CYAN if i % 2 == 0 else Fore.MAGENTA}{entry.website_or_usage}{Style.RESET_ALL}")
-            i += 1
-
-        print()
-        user_input = utils.ask_till_input(f"{Fore.MAGENTA}Enter a number or a term to search for\n > {Fore.CYAN}")
-        utils.reset_style()
-
-        is_number: bool = False
-
-        try:
-            user_input = int(user_input)
-            is_number = True
-        except ValueError:
-            pass
-
-        if is_number:
-            if user_input == 0:
-                return
-
-            if user_input > len(entries):
-                print(f"{Fore.RED}The number is greater than the number of entries!{Style.RESET_ALL}")
-                continue
-
-            selected_entry = entries[user_input - 1]
-
-            real_modify_entry(selected_entry)
-
-        else:
-            result_list = []
-
-            for entry in entries:
-
-                if user_input.lower() in entry.website_or_usage.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.username.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.description.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.password.lower():
-                    result_list.append(entry)
-
-            menu = Menu(utils.get_noice_text(f"Search result for \"{user_input}\""))
-
-            for entry in result_list:
-                menu.add_selectable(Option(entry.website_or_usage, real_modify_entry, entry, skip_enter_confirmation=True))
-
-            menu.run()
+    utils.get_entry("Modify entry", real_modify_entry, skip_enter_confirmation=False)
 
 
-@decorators.require_valid_db
 def password_generator():
     utils.clear_screen()
     utils.print_noice("Password generator")
@@ -302,8 +175,9 @@ def password_generator():
     print(f"{Fore.MAGENTA}Here is you password: {Fore.CYAN}\n\n{password}")
     print()
 
-    if utils.ask_till_input(f"{Fore.MAGENTA}Do you want to use this password to make an entry? y/N\n > {Fore.CYAN}").lower() == "y":
-        add_entry(password)
+    if constants.db_file is not None:
+        if utils.ask_till_input(f"{Fore.MAGENTA}Do you want to use this password to make an entry? y/N\n > {Fore.CYAN}").lower() == "y":
+            add_entry(password)
 
 
 def delete_entry():
@@ -322,7 +196,7 @@ def delete_entry():
         print()
 
         if utils.ask_till_input(f"{Fore.MAGENTA}Are you sure you want to delete this entry? y/N\n > {Fore.CYAN}").lower() == "y":
-            db.delete_entry(entry_to_show)
+            constants.db_file.delete_entry(entry_to_show)
             print(f"{Fore.GREEN}Successfully deleted the entry!{Style.RESET_ALL}")
 
         else:
@@ -330,73 +204,7 @@ def delete_entry():
 
         utils.enter_confirmation()
 
-    while True:
-        utils.clear_screen()
-        utils.print_noice("Search entry")
-
-        db: pw_manager.db.Database = constants.db_file
-
-        entries: list[DatabaseEntry] = db.get_all_entries()
-
-        entries.sort()
-
-        i: int = 1
-
-        print(f"{Fore.CYAN}0{Fore.MAGENTA}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
-
-        for entry in entries:
-            print(
-                f"{Fore.CYAN}{i}{Fore.MAGENTA}) {Fore.CYAN if i % 2 == 0 else Fore.MAGENTA}{entry.website_or_usage}{Style.RESET_ALL}")
-            i += 1
-
-        print()
-        user_input = utils.ask_till_input(f"{Fore.MAGENTA}Enter a number or a term to search for\n > {Fore.CYAN}")
-        utils.reset_style()
-
-        is_number: bool = False
-
-        try:
-            user_input = int(user_input)
-            is_number = True
-        except ValueError:
-            pass
-
-        if is_number:
-            if user_input == 0:
-                return
-
-            if user_input > len(entries):
-                print(f"{Fore.RED}The number is greater than the number of entries!{Style.RESET_ALL}")
-                continue
-
-            selected_entry = entries[user_input - 1]
-
-            real_delete_entry(selected_entry)
-
-        else:
-            result_list = []
-
-            for entry in entries:
-
-                if user_input.lower() in entry.website_or_usage.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.username.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.description.lower():
-                    result_list.append(entry)
-
-                elif user_input.lower() in entry.password.lower():
-                    result_list.append(entry)
-
-            menu = Menu(utils.get_noice_text(f"Search result for \"{user_input}\""))
-
-            for entry in result_list:
-                menu.add_selectable(
-                    Option(entry.website_or_usage, real_delete_entry, entry))
-
-            menu.run()
+    utils.get_entry("Delete entry", real_delete_entry, skip_enter_confirmation=True)
 
 
 def show():
@@ -406,8 +214,8 @@ def show():
 
     menu.add_selectable(Option("Search an entry", search_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Add an entry", add_entry))
-    menu.add_selectable(Option("Modify an entry", modify_entry))
-    menu.add_selectable(Option("Delete an entry", delete_entry))
+    menu.add_selectable(Option("Modify an entry", modify_entry, skip_enter_confirmation=True))
+    menu.add_selectable(Option("Delete an entry", delete_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Password generator", password_generator))
 
     menu.run()
