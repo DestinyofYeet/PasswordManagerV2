@@ -12,8 +12,8 @@ from colorama import Style, Fore
 from cryptography.fernet import InvalidToken
 
 
-@decorators.require_valid_db
-@decorators.require_valid_sync_config
+@decorators.require_valid_db()
+@decorators.require_valid_sync_config()
 def upload_current_db():
     event = threading.Event()
     try:
@@ -36,8 +36,8 @@ def upload_current_db():
     print(f"{Fore.GREEN}Successfully uploaded the database file!{Style.RESET_ALL}")
 
 
-@decorators.require_valid_db
-@decorators.require_valid_sync_config
+@decorators.require_valid_db()
+@decorators.require_valid_sync_config()
 def download_and_replace_current_db():
     event = threading.Event()
     try:
