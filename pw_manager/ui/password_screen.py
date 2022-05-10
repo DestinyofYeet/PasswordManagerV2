@@ -13,7 +13,7 @@ from pw_manager.utils import decorators
 from pw_manager.db_entry import DatabaseEntry
 
 
-@decorators.require_valid_db
+@decorators.require_valid_db(enter_confirmation=True)
 def search_entry():
     def show_entry(entry_to_show: DatabaseEntry, show_password: bool = False):
         utils.clear_screen()
@@ -38,7 +38,7 @@ def search_entry():
     utils.get_entry("Search entry", show_entry)
 
 
-@decorators.require_valid_db
+@decorators.require_valid_db(enter_confirmation=True)
 def add_entry(provided_password: str = ""):
     utils.clear_screen()
     utils.print_noice("Add entry")
@@ -79,7 +79,7 @@ def add_entry(provided_password: str = ""):
     print(f"{Fore.GREEN}Entry successfully added!{Style.RESET_ALL}")
 
 
-@decorators.require_valid_db
+@decorators.require_valid_db(enter_confirmation=True)
 def modify_entry():
     utils.clear_screen()
     utils.print_noice("Modify entry")
@@ -213,7 +213,7 @@ def show():
     menu = Menu(utils.get_noice_text("Password menu"))
 
     menu.add_selectable(Option("Search an entry", search_entry, skip_enter_confirmation=True))
-    menu.add_selectable(Option("Add an entry", add_entry))
+    menu.add_selectable(Option("Add an entry", add_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Modify an entry", modify_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Delete an entry", delete_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Password generator", password_generator))
