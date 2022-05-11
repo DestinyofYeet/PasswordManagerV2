@@ -186,10 +186,10 @@ def get_entry(title: str, func_to_run, skip_enter_confirmation: bool = True):
 
         i: int = 1
 
-        print(f"{Fore.CYAN}0{Fore.MAGENTA}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
+        print(f"{constants.colors[0]}0{constants.colors[1]}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
 
         for entry in entries:
-            print(f"{Fore.CYAN}{i}{Fore.MAGENTA}) {Fore.CYAN if i % 2 == 0 else Fore.MAGENTA}{entry.website_or_usage}{Style.RESET_ALL}")
+            print(f"{constants.colors[0]}{i}{constants.colors[1]}) {constants.colors[0] if i % 2 == 0 else constants.colors[1]}{entry.website_or_usage}{Style.RESET_ALL}")
             i += 1
 
         print()
@@ -233,7 +233,7 @@ def get_entry(title: str, func_to_run, skip_enter_confirmation: bool = True):
                 elif user_input.lower() in entry.password.lower():
                     result_list.append(entry)
 
-            menu = Menu(get_noice_text(f"Search result for \"{user_input}\""))
+            menu = Menu(get_noice_text(f"Search result for \"{user_input}\""), colors=constants.colors)
 
             for entry in result_list:
                 menu.add_selectable(Option(entry.website_or_usage, func_to_run, entry, skip_enter_confirmation=skip_enter_confirmation))

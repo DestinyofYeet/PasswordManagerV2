@@ -109,7 +109,7 @@ def select_database():
     with open(str(cache_file_path.absolute()), "w") as f:
         json.dump(cache_file, f, indent=2)
 
-    db_selection_menu = Menu(utils.get_noice_text("Selection you want to use"))
+    db_selection_menu = Menu(utils.get_noice_text("Which database do you want to use?"), colors=constants.colors)
 
     def real_select_database(path: str):
         while True:
@@ -229,7 +229,7 @@ def import_v1_database():
 def show():
     utils.clear_screen()
 
-    menu = Menu(utils.get_noice_text("Database menu"))
+    menu = Menu(utils.get_noice_text("Database menu"), colors=constants.colors)
 
     menu.add_selectable(Option("Create database", create_database))
     menu.add_selectable(Option("Select database", select_database, return_after_execution=True))

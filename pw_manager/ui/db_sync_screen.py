@@ -145,7 +145,7 @@ def setup_sync():
 
 def show():
     utils.clear_screen()
-    menu = Menu(utils.get_noice_text("Database sync"))
+    menu = Menu(utils.get_noice_text("Database sync"), colors=constants.colors)
 
     menu.add_selectable(Option("Setup sync", setup_sync))
     menu.add_selectable(Option("Upload current db", upload_current_db))

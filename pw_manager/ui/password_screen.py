@@ -210,7 +210,7 @@ def delete_entry():
 def show():
     utils.clear_screen()
 
-    menu = Menu(utils.get_noice_text("Password menu"))
+    menu = Menu(utils.get_noice_text("Password menu"), constants.colors)
 
     menu.add_selectable(Option("Search an entry", search_entry, skip_enter_confirmation=True))
     menu.add_selectable(Option("Add an entry", add_entry, skip_enter_confirmation=True))
