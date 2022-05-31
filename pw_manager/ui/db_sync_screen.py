@@ -60,7 +60,7 @@ def download_and_replace_current_db():
     print(f"{Fore.GREEN}Successfully downloaded the database file!{Style.RESET_ALL}")
 
     while True:
-        password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Password for the database!\n > {Fore.CYAN}")
+        password = utils.ask_till_input_secret(f"{constants.colors[1]}Password for the database!\n > {constants.colors[0]}")
         utils.reset_style()
 
         try:
@@ -88,7 +88,7 @@ def setup_sync():
     sync_file = pathlib.Path(utils.get_sync_file())
 
     if sync_file.exists():
-        should_overwrite = utils.ask_till_input(f"{Fore.MAGENTA}Are you sure you want to overwrite and re-setup your sync settings? y/N\n > {Fore.CYAN}")
+        should_overwrite = utils.ask_till_input(f"{constants.colors[1]}Are you sure you want to overwrite and re-setup your sync settings? y/N\n > {constants.colors[0]}")
         utils.reset_style()
 
         if not should_overwrite.lower().strip() == "y":
@@ -97,7 +97,7 @@ def setup_sync():
 
         print(f"{Fore.GREEN}Overwriting...")
 
-    server = utils.ask_till_input(f"{Fore.MAGENTA}Please enter a server to sync your database with!\n > {Fore.CYAN}").strip()
+    server = utils.ask_till_input(f"{constants.colors[1]}Please enter a server to sync your database with!\n > {constants.colors[0]}").strip()
 
     event = threading.Event()
     threading.Thread(target=utils.run_spinning_animation_till_event, args=["Running a quick ping to see if the server is reachable!", event]).start()
@@ -111,8 +111,8 @@ def setup_sync():
         return
 
     print(f"{Fore.GREEN}Server could be reached!{Style.RESET_ALL}")
-    username = utils.ask_till_input(f"{Fore.MAGENTA}Please enter a username to that server!\n > {Fore.CYAN}").strip()
-    password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Please enter the password to that username!\n > {Fore.CYAN}").strip()
+    username = utils.ask_till_input(f"{constants.colors[1]}Please enter a username to that server!\n > {constants.colors[0]}").strip()
+    password = utils.ask_till_input_secret(f"{constants.colors[1]}Please enter the password to that username!\n > {constants.colors[0]}").strip()
 
     event = threading.Event()
     threading.Thread(target=utils.run_spinning_animation_till_event, args=["Checking if the credentials are working!", event]).start()
@@ -128,7 +128,7 @@ def setup_sync():
 
     print(f"{Fore.GREEN}Credentials are working!{Style.RESET_ALL}")
 
-    path = utils.ask_till_input(f"{Fore.MAGENTA}Please enter the path of where the database should be stored on the server! (with the .db ending)\n > {Fore.CYAN}")
+    path = utils.ask_till_input(f"{constants.colors[1]}Please enter the path of where the database should be stored on the server! (with the .db ending)\n > {constants.colors[0]}")
 
     with open(utils.get_sync_file(), "w+") as f:
         data = {

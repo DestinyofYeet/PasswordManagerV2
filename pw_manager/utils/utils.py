@@ -27,7 +27,7 @@ def run_spinning_animation_till_event(message: str, event: threading.Event, slee
     current_index = 0
     while not event.is_set():
         clear_screen()
-        print(f"{Fore.CYAN}{message} {Fore.MAGENTA}{characters[current_index]}{Style.RESET_ALL}")
+        print(f"{constants.colors[0]}{message} {constants.colors[1]}{characters[current_index]}{Style.RESET_ALL}")
         time.sleep(sleep_delay)
         current_index += 1
 
@@ -77,7 +77,7 @@ def ask_till_input_secret(string_to_ask) -> str:
     return _input.strip()
 
 
-def print_noice(message: str, box_color=Fore.CYAN, text_color=Fore.RED) -> None:
+def print_noice(message: str, box_color=constants.colors[0], text_color=Fore.RED) -> None:
     """
     Prints the supplied string in a box
     :param message: The message to show
@@ -88,7 +88,7 @@ def print_noice(message: str, box_color=Fore.CYAN, text_color=Fore.RED) -> None:
     print(get_noice_text(message, box_color, text_color))
 
 
-def get_noice_text(message, box_color=Fore.CYAN, text_color=Fore.RED):
+def get_noice_text(message, box_color=constants.colors[0], text_color=Fore.RED):
     """
     Returns the supplied string in a box
     :param message: The message to show
@@ -162,7 +162,7 @@ def reset_style():
 
 
 def enter_confirmation():
-    input(f"{Fore.CYAN}Press enter to continue...{Style.RESET_ALL}")
+    input(f"{constants.colors[0]}Press enter to continue...{Style.RESET_ALL}")
 
 
 def generate_password(length: int, chars_to_use: list[str]) -> str:
@@ -186,14 +186,14 @@ def get_entry(title: str, func_to_run, skip_enter_confirmation: bool = True):
 
         i: int = 1
 
-        print(f"{constants.colors[0]}0{constants.colors[1]}) {Fore.CYAN}Exit this menu{Style.RESET_ALL}")
+        print(f"{constants.colors[0]}0{constants.colors[1]}) {constants.colors[0]}Exit this menu{Style.RESET_ALL}")
 
         for entry in entries:
             print(f"{constants.colors[0]}{i}{constants.colors[1]}) {constants.colors[0] if i % 2 == 0 else constants.colors[1]}{entry.website_or_usage}{Style.RESET_ALL}")
             i += 1
 
         print()
-        user_input = ask_till_input(f"{Fore.MAGENTA}Enter a number or a term to search for\n > {Fore.CYAN}")
+        user_input = ask_till_input(f"{constants.colors[1]}Enter a number or a term to search for\n > {constants.colors[0]}")
         reset_style()
 
         is_number: bool = False
@@ -239,3 +239,9 @@ def get_entry(title: str, func_to_run, skip_enter_confirmation: bool = True):
                 menu.add_selectable(Option(entry.website_or_usage, func_to_run, entry, skip_enter_confirmation=skip_enter_confirmation))
 
             menu.run()
+
+
+def get_color(color) -> Fore:
+    test_map = {}
+    exec(f"test_map['result'] = Fore.{color}")
+    return test_map['result']

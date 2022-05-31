@@ -19,28 +19,28 @@ from pw_manager.ui import db_sync_screen
 def create_database():
     utils.clear_screen()
     utils.print_noice("Database creation")
-    print(f"{Fore.MAGENTA}Where should we create the database? If the folder doesn't exist, it will be created. Press ctrl+c to abort the creation.")
+    print(f"{constants.colors[1]}Where should we create the database? If the folder doesn't exist, it will be created. Press ctrl+c to abort the creation.")
     print()
 
     try:
-        path_str = utils.ask_till_input(f"{Fore.MAGENTA}Please enter a folder to store the database!\n > {Fore.CYAN}")
+        path_str = utils.ask_till_input(f"{constants.colors[1]}Please enter a folder to store the database!\n > {constants.colors[0]}")
     except KeyboardInterrupt:
         print(f"{Fore.RED}Creation aborted!{Style.RESET_ALL}")
         return
 
     try:
-        file_name = input(f"{Fore.MAGENTA}Please enter a filename. Leave it empty for the default (database.db)\n > {Fore.CYAN}")
+        file_name = input(f"{constants.colors[1]}Please enter a filename. Leave it empty for the default (database.db)\n > {constants.colors[0]}")
     except KeyboardInterrupt:
         print(f"{Fore.RED}Creation aborted!{Style.RESET_ALL}")
         return
 
     try:
         while True:
-            password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Please enter a password for this database!\n > {Fore.CYAN}")
-            confirmation_password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Please confirm the password for this database!\n > {Fore.CYAN}")
+            password = utils.ask_till_input_secret(f"{constants.colors[1]}Please enter a password for this database!\n > {constants.colors[0]}")
+            confirmation_password = utils.ask_till_input_secret(f"{constants.colors[1]}Please confirm the password for this database!\n > {constants.colors[0]}")
 
             if password != confirmation_password:
-                yes_no = utils.ask_till_input(f"{Fore.MAGENTA}Passwords don't match! Do you want to try again? y/N\n > {Fore.CYAN}")
+                yes_no = utils.ask_till_input(f"{constants.colors[1]}Passwords don't match! Do you want to try again? y/N\n > {constants.colors[0]}")
 
                 if yes_no.lower() == "n":
                     return
@@ -82,7 +82,7 @@ def create_database():
         return
 
     done_event.set()
-    print(f"{Fore.GREEN}Successfully created a database at {Fore.CYAN}{str(full_db_path.absolute())}{Fore.GREEN}!\n\n{Fore.MAGENTA}Note: You still have to select the database in order to use it!{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}Successfully created a database at {constants.colors[0]}{str(full_db_path.absolute())}{Fore.GREEN}!\n\n{constants.colors[1]}Note: You still have to select the database in order to use it!{Style.RESET_ALL}")
 
 
 @decorators.catch_ctrl_c
@@ -92,7 +92,7 @@ def select_database():
     cache_file_path = pathlib.Path(utils.get_cache_file())
 
     if not cache_file_path.exists():
-        print(f"{Fore.MAGENTA}No previously created databases found! You might want to create one or add an already existing one!")
+        print(f"{constants.colors[1]}No previously created databases found! You might want to create one or add an already existing one!")
         return
 
     with open(str(cache_file_path.absolute())) as f:
@@ -116,7 +116,7 @@ def select_database():
             utils.clear_screen()
             utils.print_noice(f"Currently selecting database: {path}")
 
-            password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Password for the database: {Fore.CYAN}")
+            password = utils.ask_till_input_secret(f"{constants.colors[1]}Password for the database: {constants.colors[0]}")
             utils.reset_style()
 
             try:
@@ -134,7 +134,7 @@ def select_database():
                 else:
                     return
 
-        print(f"{Fore.GREEN}Successfully selected {Fore.MAGENTA}{constants.db_file.path}{Fore.GREEN} as the database!{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}Successfully selected {constants.colors[1]}{constants.db_file.path}{Fore.GREEN} as the database!{Style.RESET_ALL}")
 
     for i in cache_file.values():
         db_selection_menu.add_selectable(Option(f"- {i}", real_select_database, i, return_after_execution=True, skip_enter_confirmation=True))
@@ -145,13 +145,13 @@ def select_database():
 @decorators.catch_ctrl_c
 def add_existing_database():
     utils.print_noice("Add existing database")
-    db_path = utils.ask_till_input(f"{Fore.MAGENTA}Please enter the path of the existing database\n > {Fore.CYAN}")
+    db_path = utils.ask_till_input(f"{constants.colors[1]}Please enter the path of the existing database\n > {constants.colors[0]}")
     utils.reset_style()
 
     db_path = pathlib.Path(db_path)
 
     if not db_path.exists():
-        print(f"{Fore.RED}The directory {Fore.CYAN}{str(db_path.absolute())}{Fore.RED} doesn't exist!")
+        print(f"{Fore.RED}The directory {constants.colors[0]}{str(db_path.absolute())}{Fore.RED} doesn't exist!")
         return
 
     if db_path.is_dir() and not db_path.is_file():
@@ -161,9 +161,9 @@ def add_existing_database():
     success = utils.add_db_path_to_cache(str(db_path.absolute()))
 
     if success:
-        print(f"{Fore.GREEN}Successfully added path {Fore.CYAN}{str(db_path.absolute())}{Fore.GREEN} to the list of known databases!{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}Successfully added path {constants.colors[0]}{str(db_path.absolute())}{Fore.GREEN} to the list of known databases!{Style.RESET_ALL}")
     else:
-        print(f"{Fore.RED}Failed to add the path {Fore.CYAN}{str(db_path.absolute())}{Fore.RED} to the list of known databases because it already is an entry!{Style.RESET_ALL}")
+        print(f"{Fore.RED}Failed to add the path {constants.colors[0]}{str(db_path.absolute())}{Fore.RED} to the list of known databases because it already is an entry!{Style.RESET_ALL}")
 
 
 @decorators.catch_ctrl_c
@@ -172,9 +172,9 @@ def import_v1_database():
     utils.clear_screen()
     utils.print_noice("Import a v1 database")
 
-    print(f"{Fore.MAGENTA}This will import all the entries from the specified database into the currently loaded one!")
+    print(f"{constants.colors[1]}This will import all the entries from the specified database into the currently loaded one!")
 
-    path = utils.ask_till_input(f"{Fore.MAGENTA}Please enter the directory path of the v1 database!\n > {Fore.CYAN}")
+    path = utils.ask_till_input(f"{constants.colors[1]}Please enter the directory path of the v1 database!\n > {constants.colors[0]}")
 
     path = pathlib.Path(path)
 
@@ -189,7 +189,7 @@ def import_v1_database():
     if path.is_file() and path.name == "database.db":
         path = path.parent
 
-    db_password = utils.ask_till_input_secret(f"{Fore.MAGENTA}Enter the password of the v1 database file!\n > {Fore.CYAN}")
+    db_password = utils.ask_till_input_secret(f"{constants.colors[1]}Enter the password of the v1 database file!\n > {constants.colors[0]}")
 
     with open(str(path.absolute()) + "/database.db.salt", "rb") as f:
         salt = f.read()
