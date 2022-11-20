@@ -1,2 +1,6 @@
 data/
 .idea/
+dist/
+build/
+password_manager.spec
+__pycache__/

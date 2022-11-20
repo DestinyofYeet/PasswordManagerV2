@@ -143,6 +143,19 @@ def setup_sync():
     print(f"{Fore.GREEN}Configuration successfully saved!{Style.RESET_ALL}")
 
 
+@decorators.require_valid_sync_config()
+def show_sync_settings():
+    utils.clear_screen()
+    utils.print_noice("Current settings")
+
+    with open(utils.get_sync_file()) as f:
+        content: dict = json.load(f)
+
+    print(f"{constants.colors[1]}Server: {constants.colors[0]}{content.get('server')}\n"
+          f"{constants.colors[1]}Username: {constants.colors[0]}{content.get('username')}\n"
+          f"{constants.colors[1]}Path on server: {constants.colors[0]}{content.get('path')}\n\n")
+
+
 def show():
     utils.clear_screen()
     menu = Menu(utils.get_noice_text("Database sync"), colors=constants.colors)
@@ -150,5 +163,6 @@ def show():
     menu.add_selectable(Option("Setup sync", setup_sync))
     menu.add_selectable(Option("Upload current db", upload_current_db))
     menu.add_selectable(Option("Download and replace current db", download_and_replace_current_db))
+    menu.add_selectable(Option("Show current settings", show_sync_settings))
 
     menu.run()
