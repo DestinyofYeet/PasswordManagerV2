@@ -4,6 +4,7 @@ import os
 import json
 
 import bcrypt
+import cryptography.fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -165,15 +166,17 @@ class Database:
 
     # ======================= Encryption stuff =====================================
 
-    def __gen_fernet_key__(self) -> bytes:
+    def __gen_fernet_key__(self, use_256=False) -> bytes:
         """
         Generates a key using the password and salt of this db
         :return: Key in bytes
         """
         byte_password = self.password.encode()
 
+        algorithm = hashes.SHA512_256() if use_256 else hashes.SHA512()
+
         kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA512_256(),
+            algorithm=algorithm,
             length=32,
             salt=self.salt,
             iterations=100000,
@@ -200,6 +203,10 @@ class Database:
         :return: Decrypted String
         """
         fernet = Fernet(self.__gen_fernet_key__())
-        decrypted_data = fernet.decrypt(content.encode())
+        try:
+            decrypted_data = fernet.decrypt(content.encode())
+        except cryptography.fernet.InvalidToken:
+            fernet = Fernet(self.__gen_fernet_key__(use_256=True))
+            decrypted_data = fernet.decrypt(content.encode())
 
         return decrypted_data.decode()

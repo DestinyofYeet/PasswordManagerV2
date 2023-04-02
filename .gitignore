@@ -4,3 +4,4 @@ dist/
 build/
 password_manager.spec
 __pycache__/
+/test/
