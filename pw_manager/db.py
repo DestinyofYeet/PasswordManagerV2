@@ -2,6 +2,7 @@ import base64
 import pathlib
 import os
 import json
+import csv
 
 import bcrypt
 import cryptography.fernet
@@ -164,6 +165,13 @@ class Database:
         if should_write:
             self.write()
 
+    def export_database_to_csv(self, out_path):
+        with open(out_path, "w") as f:
+            writer = csv.writer(f, delimiter=",", quoting=csv.QUOTE_MINIMAL, quotechar='"')
+            writer.writerow(["name", "url", "username", "password", "note"])
+            for entry in self.content:
+                writer.writerow([entry.website_or_usage, "", entry.username, entry.password, entry.description])
+
     # ======================= Encryption stuff =====================================
 
     def __gen_fernet_key__(self, use_256=False) -> bytes:
@@ -179,7 +187,7 @@ class Database:
             algorithm=algorithm,
             length=32,
             salt=self.salt,
-            iterations=100000,
+            iterations=100_000,
             backend=default_backend()
         )
 
